@@ -2,15 +2,15 @@
 0011 //mov 1 r1
 0052 //mov 5 r2
 2004 //jump 4, later halt
-2005 //jump 5
-2006 //jump 6
-2007 //jump 7
-2008 //jump 8
-1100 //add r1 r0 r0
-6022 //jeq r0 r2 2
-2003 //jmp 3
+2005 //jump 5, later mov 0 8
+2006 //jump 6, ^
+2007 //jump 7, ^
+2008 //jump 8, ^
+1100 //increment loop variable
+6022 //if loop done, exit loop
+2003 //jmp 3 (else continue looping)
 0080 //mov 8 0 (r0 = 0008)
-0FF4 //mov 0xd255 4 //need to add 255 to r1 47 more times then add 44 to make halt (r4 = 255)
+0FF4 //mov 0xd255 4 
 02F5 //move 47 r5
 0006 //move 0 r6
 0017 //move 1 r7
@@ -18,15 +18,15 @@
 0309 //move 48 r9
 1844 //* add r8 to r4 (add 255 to r4)
 1766 //add r7 r6 r6 (add 1 to loop variable)
-6652 //jeq r6 = r5 2 (if loop variable = 47, done)
-2012 //jump to 18
+6652 //jeq r6 = r5 2 (if loop variable = 47, done)  
+2012 //jump to 18 
 1944 //add r9 to r4 (adding 48 to r4 to make it == halt)
 7403 //str 4 3 //store a halt at 3
 7004 //str 0 4
 7005 //str 0 5
 7006 //str 0 6
 7007 //str 0 7
-2004 //jump 4 
+2004 //jump 4 //now execute the stored code 
 
 
 //Should test:
@@ -35,3 +35,6 @@
 //Does predictor recover from bad predictions? With self modifying code, the jumps at pc = 3 through pc = 7 will be overwritten with stores. The predictor might have history for those pcs 
 //and try to predict that they will be taken jumps even though they are now stores (and one halt). 
 //Will the predictor recover appropriately?
+//This test takes 731 cycles with my processor without branch prediction. 
+//I might make this test more complicated by running through the stored instructions 4 more times to
+//see if their branch predictor quickly realizes the instruction is no longer a taken jump.
