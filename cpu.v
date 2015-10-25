@@ -381,9 +381,20 @@ module main();
                       wb_valid <= x2_valid;
                       wb2_valid <= wb_valid;
              end
+             else if(wb_jumpTakenShouldntHave) begin
+                       f1_valid <= 1;
+                       f2_valid <= 0;
+                       d_valid <= 0;
+                       r_valid <= 0;
+                       x1_valid <= 0;
+                       x2_valid <= 0;
+                       wb_valid <= 0;
+                       wb2_valid <= wb_valid;
+             end
              else if(wb_opcode == 2) begin
                 //Actual and taken don't match
-                if(wb_jumpTaken != wb_jmpActual) begin
+                if(wb_jumpNotTakenShouldHave) begin
+                       f1_valid <= 1;
                        f2_valid <= 0;
                        d_valid <= 0;
                        r_valid <= 0;
@@ -404,7 +415,8 @@ module main();
                 end
              end
              else if(wb_opcode == 6) begin
-                if(wb_jumpTaken != wb_jeqActual) begin
+                if(wb_jeqNotTakenShouldHave) begin
+                       f1_valid <= 1;
                        f2_valid <= 0;
                        d_valid <= 0;
                        r_valid <= 0;
