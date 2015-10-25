@@ -202,8 +202,10 @@ module main();
     reg [15:0]wb_pc = 0;
     reg wb_valid = 0;
     reg wb_jumpTaken = 0; 
-    wire wb_isHalt = (wb_opcode == 3) && wb_valid && (!wb_jumpTakenShouldntHave);
-    wire wb_regWriteEnable = wb_isWrite && wb_valid && (!wb_jumpTakenShouldntHave);
+//    wire wb_isHalt = (wb_opcode == 3) && wb_valid && (!wb_jumpTakenShouldntHave);
+    wire wb_isHalt = (wb_opcode == 3) && wb_valid;
+//    wire wb_regWriteEnable = wb_isWrite && wb_valid && (!wb_jumpTakenShouldntHave);
+    wire wb_regWriteEnable = wb_isWrite && wb_valid;
     reg [15:0]wb_aVal = 0;
     reg [15:0]wb_bVal = 0;
     reg [15:0]wb_ii = 0;
@@ -456,10 +458,8 @@ module main();
                       f1_predictionHistory[wb_pcBufferAddress] <= wb_thisPcHistoryUpdate;
                        f1_predictionBuffer[wb_pcBufferAddress][wb_thisPcHistory] <= wb_jmpActual;
                        f1_predictionBuffer[wb_pcBufferAddress][15:4] <= wb_jmpActual ? wb_jjj :
-                                                                        wb_jeqActual ? wb_pc + wb_tReg :
-                                                                        0;
-
-//                                                                : f1_predictionBuffer[wb_pcBufferAddress][15:4];
+                                                                        wb_jeqActual ? wb_pc + wb_tReg
+                                                                : f1_predictionBuffer[wb_pcBufferAddress][15:4];
 
                end
 
@@ -473,12 +473,6 @@ module main();
                 end
 
                 4'h2 : begin // jmp
-                   //always: update prediction history
-/*                      f1_predictionHistory[wb_pcBufferAddress] <= wb_thisPcHistoryUpdate;
-                       f1_predictionBuffer[wb_pcBufferAddress][wb_thisPcHistory] <= wb_jmpActual;
-                       f1_predictionBuffer[wb_pcBufferAddress][15:4] <= wb_jmpActual ? wb_jjj
-                                                                : f1_predictionBuffer[wb_pcBufferAddress][15:4];
-*/
                    
                 end 
 
@@ -492,12 +486,6 @@ module main();
                 end
 
                 4'h6 : begin //jeq
-                       //always update history
-/*                       f1_predictionHistory[wb_pcBufferAddress] <= wb_thisPcHistoryUpdate;
-                       f1_predictionBuffer[wb_pcBufferAddress][wb_thisPcHistory] <= wb_jeqActual;
-                       f1_predictionBuffer[wb_pcBufferAddress][15:4] <= wb_jeqActual ? wb_pc + wb_tReg
-                                                                : f1_predictionBuffer[wb_pcBufferAddress][15:4];
-*/
                 end
                 4'h7 : begin //str
                     if(wb_x2PcHazard) begin
