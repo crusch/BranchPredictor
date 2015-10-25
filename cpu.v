@@ -260,7 +260,12 @@ module main();
     wire [15:0]wb_thisPcBufferEntry = f1_predictionBuffer[wb_pc % 48];
     wire [1:0]wb_thisPcHistoryUpdate = (wb_thisPcHistory[0] << 1) | (wb_jmpActual | wb_jeqActual);
     wire [7:0]wb_pcBufferAddress = wb_pc % 48;
-    wire wb_jumpTakenShouldntHave = (!wb_jmpActual) && wb_jumpTaken && wb_valid;
+    wire wb_jumpTakenShouldntHave = wb_jumpTaken && wb_valid && !wb_jmpActual;
+    wire wb_jmpDestinationMismatch = wb_jumpTakenShouldHave && (wb_jjj != x2_pc) && wb_valid;
+    wire wb_jeqDestinationMismatch = wb_jeqTakenShouldHave && ((wb_pc + wb_tReg) != x2_pc) && wb_valid;
+    wire wb_jumpTakenShouldHave = wb_jmpActual && wb_isJmp && wb_jumpTaken;
+    wire wb_jeqTakenShouldHave = wb_jeqActual && wb_isJeq && wb_jumpTaken;
+
     wire wb_jumpNotTakenShouldHave = (wb_isJmp) && wb_jmpActual && (!wb_jumpTaken) && wb_valid;
     wire wb_jeqNotTakenShouldHave = (wb_isJeq) && wb_jeqActual && (!wb_jumpTaken) && wb_valid;
     wire wb_storePcUpdate = (wb_opcode == 7) && wb_valid && wb_storeHazard;
@@ -363,6 +368,10 @@ module main();
                   pc <= wb_pc + 1;
              else if(wb_jeqNotTakenShouldHave)
                   pc <= wb_pc + wb_tReg;
+             else if(wb_jmpDestinationMismatch)
+                  pc <= wb_jjj;
+             else if(wb_jeqDestinationMismatch)
+                  pc <= wb_tReg + wb_pc;
              else if(wb_storePcUpdate)
                   pc <= wb_s;
              else if(f1_thisPcPrediction)
@@ -382,6 +391,16 @@ module main();
                       x2_valid <= x1_valid;
                       wb_valid <= x2_valid;
                       wb2_valid <= wb_valid;
+             end
+             else if(wb_jmpDestinationMismatch || wb_jeqDestinationMismatch) begin
+                       f1_valid <= 1;
+                       f2_valid <= 0;
+                       d_valid <= 0;
+                       r_valid <= 0;
+                       x1_valid <= 0;
+                       x2_valid <= 0;
+                       wb_valid <= 0;
+                       wb2_valid <= wb_valid;
              end
              else if(wb_jumpTakenShouldntHave) begin
                        f1_valid <= 1;
