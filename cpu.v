@@ -258,11 +258,8 @@ module main();
     wire [15:0]wb_thisPcBufferEntry = f1_predictionBuffer[wb_pc % 48];
     wire [1:0]wb_thisPcHistoryUpdate = (wb_thisPcHistory[0] << 1) | (wb_jmpActual | wb_jeqActual);
     wire [7:0]wb_pcBufferAddress = wb_pc % 48;
-//    wire wb_jumpTakenShouldntHave = (wb_isJmp) && (!wb_jmpActual) && wb_jumpTaken;
     wire wb_jumpTakenShouldntHave = (!wb_jmpActual) && wb_jumpTaken;
     wire wb_jumpNotTakenShouldHave = (wb_isJmp) && wb_jmpActual && (!wb_jumpTaken);
-//    wire wb_jeqTakenShouldntHave = (wb_isJeq) && (!wb_jeqActual) && wb_jumpTaken;
-    wire wb_jeqTakenShouldntHave = (!wb_jeqActual) && wb_jumpTaken;
     wire wb_jeqNotTakenShouldHave = (wb_isJeq) && wb_jeqActual && (!wb_jumpTaken);
     wire wb_storePcUpdate = (wb_opcode == 7) && wb_valid && wb_storeHazard;
 
@@ -368,7 +365,6 @@ module main();
 /*             pc <= wb_jumpNotTakenShouldHave ? wb_jjj :
                   wb_jumpTakenShouldntHave ? wb_pc + 1 :
                   wb_jeqNotTakenShouldHave ? wb_pc + wb_tReg :
-                  wb_jeqTakenShouldntHave ? wb_pc + 1 :
                   wb_storePcUpdate ? wb_s :
                   d_isStall ? pc : pc + 1; */
 
@@ -378,8 +374,6 @@ module main();
                   pc <= wb_pc + 1;
              else if(wb_jeqNotTakenShouldHave)
                   pc <= wb_pc + wb_tReg;
-             else if(wb_jeqTakenShouldntHave)
-                  pc <= wb_pc + 1;
              else if(wb_storePcUpdate)
                   pc <= wb_s;
              else if(d_isStall)
@@ -392,7 +386,7 @@ module main();
  
             if(wb_valid) begin
                            //took jump when shouldn't have recovery
-            if(wb_jumpTakenShouldntHave || wb_jeqTakenShouldntHave) begin
+            if(wb_jumpTakenShouldntHave) begin
                        f2_valid <= 0;
                        d_valid <= 0;
                        r_valid <= 0;
@@ -502,7 +496,7 @@ module main();
                       wb_valid <= 0;
                       wb2_valid <= 0;
                     end*/
-                    else if(!wb_jeqTakenShouldntHave) begin
+                    else if(!wb_jumpTakenShouldntHave) begin
                       f1_valid <= 1;
                       f2_valid <= f1_valid;
                       d_valid <= f2_valid;
