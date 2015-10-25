@@ -1,13 +1,61 @@
   
 
-           P6 CPI       p7 CPI       Impact of branch predictor
+           P6 CPI       P8 CPI       Impact of branch predictor
 
-test1
+test1     190 cycles   112 cycles    -78 cycles
+ 
+test2     88 cycles    64 cycles     -24 cycles
 
+test3     39 cycles    39 cycles     None
 
-test2
+test4     29 cycles    29 cycles     None
 
+test5     306 cycles   132 cycles    -174 cycles
 
-...
+test6     49 cycles    49 cycles     None
+
+test7     108 cycles   fail
+
+test8     26 cycles    26 cycles     None
+
+test9     2144 cycles  fail
+
+testa     42 cycles    42 cycles     None
+
+testb     119 cycles   fail
+
+testc     160 cycles   fail
+
+testd     23 cycles    23 cycles     None
+
+teste     24 cycles    24 cycles     None
+
+testf     24 cycles    24 cycles     None
+
+testg     10 cycles    10 cycles     None
+
+testh     16 cycles    16 cycles     None
+
+testi     31 cycles    31 cycles     None
+
+testj     17 cycles    17 cycles     None
+
+testk     11 cycles    11 cycles     None
+
+testl     339 cycles   165 cycles    -174 cycles
+
+testm     24 cycles    24 cycles
+
+testn     24 cycles    24 cycles
+
+testo     89 cycles    fail
+
+testu                  fail
+
+testv     297 cycles   fail
+
+testw     21350 cycles fail
+
+testz     29192 cycles fail
 
 
