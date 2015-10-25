@@ -258,9 +258,9 @@ module main();
     wire [15:0]wb_thisPcBufferEntry = f1_predictionBuffer[wb_pc % 48];
     wire [1:0]wb_thisPcHistoryUpdate = (wb_thisPcHistory[0] << 1) | (wb_jmpActual | wb_jeqActual);
     wire [7:0]wb_pcBufferAddress = wb_pc % 48;
-    wire wb_jumpTakenShouldntHave = (!wb_jmpActual) && wb_jumpTaken;
-    wire wb_jumpNotTakenShouldHave = (wb_isJmp) && wb_jmpActual && (!wb_jumpTaken);
-    wire wb_jeqNotTakenShouldHave = (wb_isJeq) && wb_jeqActual && (!wb_jumpTaken);
+    wire wb_jumpTakenShouldntHave = (!wb_jmpActual) && wb_jumpTaken && wb_valid;
+    wire wb_jumpNotTakenShouldHave = (wb_isJmp) && wb_jmpActual && (!wb_jumpTaken) && wb_valid;
+    wire wb_jeqNotTakenShouldHave = (wb_isJeq) && wb_jeqActual && (!wb_jumpTaken) && wb_valid;
     wire wb_storePcUpdate = (wb_opcode == 7) && wb_valid && wb_storeHazard;
 
 
