@@ -32,12 +32,12 @@ module main();
     /**************************
     **Branch predictor buffer**
     **************************/
-    reg [15:0]f1_predictionBuffer[47:0];
-    reg [1:0]f1_predictionHistory[47:0];
+    reg [15:0]f1_predictionBuffer[4095:0];
+    reg [1:0]f1_predictionHistory[4095:0];
 
     reg [15:0]k;
     initial begin
-        for(k = 0; k < 48; k = k + 1)
+        for(k = 0; k < 4096; k = k + 1)
         begin
            f1_predictionBuffer[k] = 0; 
            f1_predictionHistory[k] = 0; 
@@ -48,7 +48,7 @@ module main();
     to read from prediction buffer, to write to prediction buffer*/
     
     //pretty sure these are all fine
-    wire [7:0]f1_thisPcBufferAddress = f1_pc % 48;
+    wire [7:0]f1_thisPcBufferAddress = f1_pc % 4096;
     wire [1:0]f1_thisPcHistory = f1_predictionHistory[f1_thisPcBufferAddress];
     wire [15:0]f1_thisPcBufferEntry = f1_predictionBuffer[f1_thisPcBufferAddress];
     wire f1_thisPcPrediction = f1_thisPcBufferEntry[f1_thisPcHistory];
@@ -256,10 +256,10 @@ module main();
                           || wb_rPcHazard || wb_x1PcHazard || wb_x2PcHazard;
 
 
-    wire [1:0]wb_thisPcHistory = f1_predictionHistory[wb_pc % 48];
-    wire [15:0]wb_thisPcBufferEntry = f1_predictionBuffer[wb_pc % 48];
+    wire [1:0]wb_thisPcHistory = f1_predictionHistory[wb_pc % 4096];
+    wire [15:0]wb_thisPcBufferEntry = f1_predictionBuffer[wb_pc % 4096];
     wire [1:0]wb_thisPcHistoryUpdate = (wb_thisPcHistory[0] << 1) | (wb_jmpActual | wb_jeqActual);
-    wire [7:0]wb_pcBufferAddress = wb_pc % 48;
+    wire [7:0]wb_pcBufferAddress = wb_pc % 4096;
     wire wb_jumpTakenShouldntHave = wb_jumpTaken && wb_valid && !wb_jmpActual;
     wire wb_jmpDestinationMismatch = wb_jumpTakenShouldHave && (wb_jjj != x2_pc) && wb_valid;
     wire wb_jeqDestinationMismatch = wb_jeqTakenShouldHave && ((wb_pc + wb_tReg) != x2_pc) && wb_valid;
