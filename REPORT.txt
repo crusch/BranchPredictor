@@ -54,8 +54,27 @@ testu     731 cycles   425 cycles    -306 cycles
 
 testv     297 cycles   219 cycles    -78 cycles
 
-testw     21350 cycles timeout
+testw     21350 cycles 21356 cycles   +6 cycles
+No improvement because test cycles through large number of jumps a total of 3 times. 
+I implemented a 2 level branch predictor, so the predictor needs to run through the 
+jumps at least 4 times to initialized the history for each possible jump history. In 
+this test, the first time the jumps are run through, they have a history of not taken 
+and not taken, and the predictor updates with the outcome, so the next time the jumps 
+are not taken and not taken we will predict taken. The next time the jumps are executed, 
+they have a history of not taken and taken. Since the predictor hasn't encountered this 
+state yet, we see no improvement. The predictor updates the with the outcome, so next 
+time the jumps are not taken and taken we will predict taken. The final time the jumps 
+are executed, we have a history of taken and taken. This state has not been encountered 
+yet, so we see no improvement, but the predictor updates with the outcome. So since the 
+jumps are only executed a total of 3 times, we see no improvement because each time the 
+predictor has not encountered that state for each pc so it cannot make predictions. If 
+the jumps were to be executed a 4th time we could see improvement. 
 
-testz     29192 cycles timeout
+testz     29192 cycles 29192 cycles    None
+Not sure why there isn't any improvement on this test to be honest. It might be a similar 
+situation to testw where the predictor hasn't seen enough state to make an improvement. 
+
+Total cycle count    P6      P8       Improvement
+                    55502   53258    -2244 cycles
 
 
