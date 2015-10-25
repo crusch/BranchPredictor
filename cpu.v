@@ -202,7 +202,7 @@ module main();
     reg [15:0]wb_pc = 0;
     reg wb_valid = 0;
     reg wb_jumpTaken = 0; 
-    wire wb_isHalt = (wb_opcode == 3) && wb_valid;
+    wire wb_isHalt = (wb_opcode == 3) && wb_valid && (!wb_jumpTakenShouldntHave);
     wire wb_regWriteEnable = wb_isWrite && wb_valid && (!wb_jumpTakenShouldntHave);
     reg [15:0]wb_aVal = 0;
     reg [15:0]wb_bVal = 0;
@@ -452,6 +452,16 @@ module main();
  
 
             if(wb_valid) begin
+               if(wb_jumpTaken || wb_isJmp || wb_isJeq) begin
+                      f1_predictionHistory[wb_pcBufferAddress] <= wb_thisPcHistoryUpdate;
+                       f1_predictionBuffer[wb_pcBufferAddress][wb_thisPcHistory] <= wb_jmpActual;
+                       f1_predictionBuffer[wb_pcBufferAddress][15:4] <= wb_jmpActual ? wb_jjj :
+                                                                        wb_jeqActual ? wb_pc + wb_tReg :
+                                                                        0;
+
+//                                                                : f1_predictionBuffer[wb_pcBufferAddress][15:4];
+
+               end
 
             case (wb_opcode)
                 4'h0 : begin // mov
@@ -464,34 +474,12 @@ module main();
 
                 4'h2 : begin // jmp
                    //always: update prediction history
-                      f1_predictionHistory[wb_pcBufferAddress] <= wb_thisPcHistoryUpdate;
+/*                      f1_predictionHistory[wb_pcBufferAddress] <= wb_thisPcHistoryUpdate;
                        f1_predictionBuffer[wb_pcBufferAddress][wb_thisPcHistory] <= wb_jmpActual;
                        f1_predictionBuffer[wb_pcBufferAddress][15:4] <= wb_jmpActual ? wb_jjj
                                                                 : f1_predictionBuffer[wb_pcBufferAddress][15:4];
-
+*/
                    
-                   //jump was not taken and should have been
-/*                   if((wb_isJmp) && wb_jmpActual && (!wb_jumpTaken)) begin
-                       f2_valid <= 0;
-                       d_valid <= 0;
-                       r_valid <= 0;
-                       x1_valid <= 0;
-                       x2_valid <= 0;
-                       wb_valid <= 0;
-                       wb2_valid <= wb_valid;
-                   end8?
-                   //jump was taken and shouldn't have been
-/*                   if((wb_isJmp) && (!wb_jmpActual) && wb_jumpTaken) begin
-                       f2_valid <= 0;
-                       d_valid <= 0;
-                       r_valid <= 0;
-                       x1_valid <= 0;
-                       x2_valid <= 0;
-                       wb_valid <= 0;
-                       wb2_valid <= wb_valid; */
-                  // end
-
-                   //else, we made the right decision and nothing needs to happen. 
                 end 
 
                 4'h3 : begin // halt
@@ -505,46 +493,11 @@ module main();
 
                 4'h6 : begin //jeq
                        //always update history
-//                       wb_thisPcHistoryUpdate[1] <= wb_thisPcHistory[0];
-//                       wb_thisPcHistoryUpdate[0] <= wb_jeqActual;
-                       f1_predictionHistory[wb_pcBufferAddress] <= wb_thisPcHistoryUpdate;
+/*                       f1_predictionHistory[wb_pcBufferAddress] <= wb_thisPcHistoryUpdate;
                        f1_predictionBuffer[wb_pcBufferAddress][wb_thisPcHistory] <= wb_jeqActual;
                        f1_predictionBuffer[wb_pcBufferAddress][15:4] <= wb_jeqActual ? wb_pc + wb_tReg
                                                                 : f1_predictionBuffer[wb_pcBufferAddress][15:4];
-
-
-                    //jeq should have been taken and wasn't
-/*                    if((wb_isJeq) && wb_jeqActual && (!wb_jumpTaken)) begin
-                      f1_valid <= 1;
-                      f2_valid <= 0;
-                      d_valid <= 0; 
-                      r_valid <= 0;
-                      x1_valid <= 0;
-                      x2_valid <= 0;
-                      wb_valid <= 0;	
-                      wb2_valid <= wb_valid;
-                      end*/
-                    //jeq shouldn't have been taken but was
-/*                      else if(wb_isJeq && (!wb_jeqActual) && wb_jumpTaken) begin
-                      f1_valid <= 1;
-                      f2_valid <= 0;
-                      d_valid <= 0;
-                      r_valid <= 0;
-                      x1_valid <= 0;
-                      x2_valid <= 0;
-                      wb_valid <= 0;
-                      wb2_valid <= 0;
-                    end*/
-/*                    else if(!wb_jumpTakenShouldntHave) begin
-                      f1_valid <= 1;
-                      f2_valid <= f1_valid;
-                      d_valid <= f2_valid;
-                      r_valid <= d_isStall ? 0 : d_valid;
-                      x1_valid <= r_valid;
-                      x2_valid <= x1_valid;
-                      wb_valid <= x2_valid;
-                      wb2_valid <= wb_valid;
-                    end*/
+*/
                 end
                 4'h7 : begin //str
                     if(wb_x2PcHazard) begin
