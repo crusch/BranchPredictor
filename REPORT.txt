@@ -14,17 +14,17 @@ test5     306 cycles   132 cycles    -174 cycles
 
 test6     49 cycles    49 cycles     None
 
-test7     108 cycles   fail
+test7     108 cycles   108 cycles    None
 
 test8     26 cycles    26 cycles     None
 
-test9     2144 cycles  fail
+test9     2144 cycles  776 cycles    -1368 cycles
 
 testa     42 cycles    42 cycles     None
 
-testb     119 cycles   fail
+testb     119 cycles   107 cycles    -12 cycles
 
-testc     160 cycles   fail
+testc     160 cycles   142 cycles    -18 cycles
 
 testd     23 cycles    23 cycles     None
 
@@ -44,18 +44,18 @@ testk     11 cycles    11 cycles     None
 
 testl     339 cycles   165 cycles    -174 cycles
 
-testm     24 cycles    24 cycles
+testm     24 cycles    24 cycles     None
 
-testn     24 cycles    24 cycles
+testn     24 cycles    24 cycles     None
 
-testo     89 cycles    fail
+testo     89 cycles    71 cycles     -18 cycles
 
-testu                  fail
+testu     731 cycles   425 cycles    -306 cycles
 
-testv     297 cycles   fail
+testv     297 cycles   219 cycles    -78 cycles
 
-testw     21350 cycles fail
+testw     21350 cycles timeout
 
-testz     29192 cycles fail
+testz     29192 cycles timeout
 
 
