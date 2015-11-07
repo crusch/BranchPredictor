@@ -40,7 +40,7 @@ module main();
         for(k = 0; k < 4096; k = k + 1)
         begin
            f1_predictionBuffer[k] = 0; 
-           f1_predictionHistory[k] = 0; 
+           f1_predictionHistory[k] = 4'b0101; 
         end
     end
 
