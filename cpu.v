@@ -32,15 +32,20 @@ module main();
     /**************************
     **Branch predictor buffer**
     **************************/
-    reg [15:0]f1_predictionBuffer[4095:0];
+//    reg [15:0]f1_predictionBuffer[4095:0];
+    reg [11:0]f1_predictionBuffer[4095:0];
+//    reg [1:0]f1_predictionHistory[4095:0];
     reg [1:0]f1_predictionHistory[4095:0];
+    reg [3:0]f1_predictionChoice[4095:0]; 
 
     reg [15:0]k;
     initial begin
         for(k = 0; k < 4096; k = k + 1)
         begin
-           f1_predictionBuffer[k] = 0; 
-           f1_predictionHistory[k] = 4'b0101; 
+//           f1_predictionBuffer[k] = 16'b1010; 
+           f1_predictionBuffer[k] = 0;
+           f1_predictionHistory[k] = 0;
+           f1_predictionChoice[k] = 4'b1110; 
         end
     end
 
@@ -51,8 +56,8 @@ module main();
     wire [7:0]f1_thisPcBufferAddress = f1_pc % 4096;
     wire [1:0]f1_thisPcHistory = f1_predictionHistory[f1_thisPcBufferAddress];
     wire [15:0]f1_thisPcBufferEntry = f1_predictionBuffer[f1_thisPcBufferAddress];
-    wire f1_thisPcPrediction = f1_thisPcBufferEntry[f1_thisPcHistory];
-    wire [15:0]f1_thisPcDest = f1_thisPcBufferEntry[15:4];
+    wire f1_thisPcPrediction = f1_predictionChoice[f1_thisPcBufferAddress];
+    wire [15:0]f1_thisPcDest = f1_thisPcBufferEntry;
 
     /*************************
     ****FETCH 2 - TIME: t1***
@@ -475,8 +480,8 @@ module main();
             if(wb_valid) begin
                if(wb_jumpTaken || wb_isJmp || wb_isJeq) begin
                       f1_predictionHistory[wb_pcBufferAddress] <= wb_thisPcHistoryUpdate;
-                       f1_predictionBuffer[wb_pcBufferAddress][wb_thisPcHistory] <= wb_jmpActual;
-                       f1_predictionBuffer[wb_pcBufferAddress][15:4] <= wb_jmpActual ? wb_jjj :
+                       f1_predictionChoice[wb_pcBufferAddress] <= wb_jmpActual;
+                       f1_predictionBuffer[wb_pcBufferAddress] <= wb_jmpActual ? wb_jjj :
                                                                         wb_jeqActual ? wb_pc + wb_tReg
                                                                 : f1_predictionBuffer[wb_pcBufferAddress][15:4];
 
